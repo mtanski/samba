@@ -279,6 +279,24 @@ struct smbcli_request *smb_raw_close_send(struct smbcli_tree *tree, union smb_cl
 NTSTATUS smb_raw_open_recv(struct smbcli_request *req, TALLOC_CTX *mem_ctx, union smb_open *parms);
 struct smbcli_request *smb_raw_open_send(struct smbcli_tree *tree, union smb_open *parms);
 
+/** Create a read request without submitting it.
+ *
+ * This interface is useful if you want to control the network / event code yourself. Like in
+ * the cases of async requests.
+ *
+ * @see smbcli_request_send()
+ */
+struct smbcli_request *smb_raw_make_read_req(struct smbcli_tree *tree, union smb_read *parms);
+
+/** Create a writer request without submitting it.
+ *
+ * This interface is useful if you want to control the network / event code yourself. Like in
+ * the cases of async requests.
+ *
+ * @see smbcli_request_send()
+ */
+struct smbcli_request *smb_raw_make_write_req(struct smbcli_tree *tree, union smb_write *parms);
+
 bool smbcli_transport_process(struct smbcli_transport *transport);
 const char *smbcli_errstr(struct smbcli_tree *tree);
 NTSTATUS smb_raw_fsinfo(struct smbcli_tree *tree, TALLOC_CTX *mem_ctx, union smb_fsinfo *fsinfo);

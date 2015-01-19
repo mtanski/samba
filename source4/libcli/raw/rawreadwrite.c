@@ -28,9 +28,9 @@
 } while (0)
 
 /****************************************************************************
- low level read operation (async send)
+ low level create read operation (without sending it)
 ****************************************************************************/
-_PUBLIC_ struct smbcli_request *smb_raw_read_send(struct smbcli_tree *tree, union smb_read *parms)
+_PUBLIC_ struct smbcli_request *smb_raw_make_read_req(struct smbcli_tree *tree, union smb_read *parms)
 {
 	bool bigoffset = false;
 	struct smbcli_request *req = NULL; 
@@ -99,7 +99,17 @@ _PUBLIC_ struct smbcli_request *smb_raw_read_send(struct smbcli_tree *tree, unio
 		return NULL;
 	}
 
-	if (!smbcli_request_send(req)) {
+	return req;
+}
+
+/****************************************************************************
+ low level read operation (async send)
+****************************************************************************/
+_PUBLIC_ struct smbcli_request *smb_raw_read_send(struct smbcli_tree *tree, union smb_read *parms)
+{
+	struct smbcli_request *req = smb_raw_make_read_req(tree, parms);
+
+	if (req && !smbcli_request_send(req)) {
 		smbcli_request_destroy(req);
 		return NULL;
 	}
@@ -200,11 +210,10 @@ _PUBLIC_ NTSTATUS smb_raw_read(struct smbcli_tree *tree, union smb_read *parms)
 	return smb_raw_read_recv(req, parms);
 }
 
-
 /****************************************************************************
- raw write interface (async send)
+ low level create write request (without sending it)
 ****************************************************************************/
-_PUBLIC_ struct smbcli_request *smb_raw_write_send(struct smbcli_tree *tree, union smb_write *parms)
+_PUBLIC_ struct smbcli_request *smb_raw_make_write_req(struct smbcli_tree *tree, union smb_write *parms)
 {
 	bool bigoffset = false;
 	struct smbcli_request *req = NULL; 
@@ -286,7 +295,18 @@ _PUBLIC_ struct smbcli_request *smb_raw_write_send(struct smbcli_tree *tree, uni
 		return NULL;
 	}
 
-	if (!smbcli_request_send(req)) {
+	return req;
+}
+
+
+/****************************************************************************
+ raw write interface (async send)
+****************************************************************************/
+_PUBLIC_ struct smbcli_request *smb_raw_write_send(struct smbcli_tree *tree, union smb_write *parms)
+{
+	struct smbcli_request *req = smb_raw_make_write_req(tree, parms);
+
+	if (req && !smbcli_request_send(req)) {
 		smbcli_request_destroy(req);
 		return NULL;
 	}
